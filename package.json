@@ -1,0 +1,22 @@
+{
+  "name": "maplibre-gl-map-to-image",
+  "version": "1.0.0",
+  "description": "A plug in for maplibregljs that captures a map canvas along with overlays and converts it to a raster image.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Willjfield/maplibre-gl-map-to-image.git"
+  },
+  "author": "willjfield",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Willjfield/maplibre-gl-map-to-image/issues"
+  },
+  "homepage": "https://github.com/Willjfield/maplibre-gl-map-to-image#readme",
+  "dependencies": {
+    "html-to-image": "^1.11.13"
+  }
+}
