@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "description": "A plug in for maplibregljs that captures a map canvas along with overlays and converts it to a raster image.",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --experimental-vm-modules",
+    "coverage": "jest --all --coverage"
   },
   "repository": {
     "type": "git",
