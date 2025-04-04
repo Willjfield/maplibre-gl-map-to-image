@@ -33,6 +33,8 @@ const map = new maplibregl.Map({
   // your map options here
 });
 
+const targetImage = document.getElementById('target-image');
+
 const options = {
     targetImageId, //* @param {string} REQUIRED: The ID of the target image element where the PNG will be set.
     [bbox], //* @param {array} Optional bounding box to fit the map before conversion.
@@ -44,8 +46,6 @@ const options = {
     [showHiddenLayers], //* @param {array} Layer IDs to show during conversion.
 }
 
-const image = await toPng(map, options);
+await toPng(map, options);
 
-const imgElement = document.getElementById('my-image');
-imgElement.src = image;
 ```
