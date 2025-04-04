@@ -37,13 +37,13 @@ const targetImage = document.getElementById('target-image');
 
 const options = {
     targetImageId, //* @param {string} REQUIRED: The ID of the target image element where the PNG will be set.
-    [bbox], //* @param {array} Optional bounding box to fit the map before conversion.
-    hideAllControls, //* @param {boolean} Flag to hide all map controls during conversion.
-    [hideControlsInCorner], //* @param {array} Specific corners to hide controls from.
-    hideMarkers, //* @param {boolean} Flag to hide markers during conversion.
-    hidePopups, //* @param {boolean} Flag to hide popups during conversion.
-    [hideVisibleLayers], //* @param {array}Layer IDs to hide during conversion.
-    [showHiddenLayers], //* @param {array} Layer IDs to show during conversion.
+    [bbox], //* @param {array} Optional bounding box to fit the map before conversion. Default: null
+    hideAllControls, //* @param {boolean} Optional flag to hide all map controls during conversion. Default: false
+    [hideControlsInCorner], //* @param {array} Optional specific corners to hide controls from. Default: []
+    hideMarkers, //* @param {boolean} Optional flag to hide markers during conversion. Default: false
+    hidePopups, //* @param {boolean} Optional flag to hide popups during conversion. Default: false
+    [hideVisibleLayers], //* @param {array} Optional layer IDs to hide during conversion. Default: []
+    [showHiddenLayers], //* @param {array} Optional layer IDs to show during conversion. Default: []
 }
 
 await toPng(map, options);
