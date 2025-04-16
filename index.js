@@ -15,7 +15,7 @@ import * as htmlToImage from 'html-to-image';
  * @returns {Promise} Resolves when the image has been successfully generated and set.
  */
 
-export async function toPng(map, options) {
+export async function toElement(map, options) {
     let originalBounds = map.getBounds();
     if (options.bbox) {
         map.fitBounds(options.bbox, { animate: false });
@@ -50,10 +50,25 @@ export async function toPng(map, options) {
 
             mapElement.append(virtualClone);
 
-            htmlToImage
-                .toPng(virtualClone)
-                .then((dataUrl) => {
+            let imgFunc;
+            switch (options.format) {
+                case 'jpeg':
+                    imgFunc = htmlToImage.toJpeg;
+                    break;
+                case 'svg':
+                    imgFunc = htmlToImage.toSvg;
+                    break;
+                case 'canvas':
+                    imgFunc = htmlToImage.toCanvas;
+                    break;
+                case 'png':
+                default:
+                    imgFunc = htmlToImage.toPng;
+                    break;
+            }
 
+            imgFunc(virtualClone)
+                .then((dataUrl) => {
                     targetImageElement.src = dataUrl;
                     mapElement.style.zIndex = mapZIndex;
                     virtualClone.remove();
