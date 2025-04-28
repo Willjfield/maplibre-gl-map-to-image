@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/Willjfield/maplibre-gl-map-to-image#readme",
   "devDependencies": {
-    "html-to-image": "^1.11.13"
+    "html-to-image": "^1.11.13",
+    "vite": "^6.3.1"
   }
 }

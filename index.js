@@ -66,7 +66,7 @@ export async function toElement(map, options) {
                     imgFunc = htmlToImage.toPng;
                     break;
             }
-
+            
             imgFunc(virtualClone)
                 .then((dataUrl) => {
                     targetImageElement.src = dataUrl;
