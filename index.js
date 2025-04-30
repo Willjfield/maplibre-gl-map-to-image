@@ -1,32 +1,62 @@
 import * as htmlToImage from 'html-to-image';
+
 /**
- * Converts a MapLibre map to a PNG image and sets the image source to a specified target element.
- *
+ * Creates a raster image from a MapLibre map. The map is first captured as a virtual
+ * clone, and then the image is generated from this clone. This process allows the
+ * image to be rendered with all of the map's overlays and controls visible.
  * @param {object} map - The MapLibre map instance.
- * @param {object} options - Configuration options for the conversion process.
- * @param {string} options.targetImageId - REQUIRED: The ID of the target image element where the PNG will be set.
- * @param {array} [options.bbox] - Optional bounding box to fit the map before conversion.
- * @param {boolean} [options.hideAllControls] - Flag to hide all map controls during conversion.
- * @param {array} [options.hideControlsInCorner] - Specific corners to hide controls from.
- * @param {boolean} [options.hideMarkers] - Flag to hide markers during conversion.
- * @param {boolean} [options.hidePopups] - Flag to hide popups during conversion.
- * @param {array} [options.hideVisibleLayers] - Layer IDs to hide during conversion.
- * @param {array} [options.showHiddenLayers] - Layer IDs to show during conversion.
- * @returns {Promise} Resolves when the image has been successfully generated and set.
+ * @param {object} options - Configuration options that dictate how the image should be generated.
+ * @param {string} [options.targetImageId] - REQUIRED: The ID of the HTML element where the image should be inserted.
+ * @param {boolean} [options.hideAllControls] - Flag to hide all map controls.
+ * @param {array} [options.hideControlsInCorner] - Specific corners from which to hide controls.
+ * @param {boolean} [options.hideMarkers] - Flag to hide all map markers.
+ * @param {boolean} [options.hidePopups] - Flag to hide all map popups.
+ * @param {array} [options.hideVisibleLayers] - Layer IDs to hide on the map by setting their visibility to 'none'.
+ * @param {array} [options.showHiddenLayers] - Layer IDs to show on the map by setting their visibility to 'visible'.
+ * @param {array} [options.bbox] - Optional bounding box to fit the map to, with padding.
+ * @param {boolean} [options.coverEdits] - Flag to prevent seeing any map edits by capturing a background image before the map is rendered.
+ * @param {string} [options.format] - The format of the generated image. Possible values are 'jpeg', 'png', 'svg', and 'canvas'.
+ * @returns {Promise} A promise that resolves when the image has been generated and inserted into the page.
  */
-
 export async function toElement(map, options) {
-    let originalBounds = map.getBounds();
-    if (options.bbox) {
-        map.fitBounds(options.bbox, { animate: false });
-    }
-
+   
     const mapElement = map.getContainer();
-    mapElement.style.height = `${mapElement.getBoundingClientRect().height}px`;
+    let originalBounds = map.getBounds();
+    
+    const originalCanvas = map.getCanvas();
+   
     const targetImageElement = document.getElementById(options.targetImageId);
-
     const virtualClone = mapElement.cloneNode(true);
     const mapZIndex = getComputedStyle(mapElement).zIndex;
+
+    mapElement.style.height = `${mapElement.getBoundingClientRect().height}px`;
+    mapElement.style.width = `${mapElement.getBoundingClientRect().width}px`;
+    
+    let photocover;
+    const preserveDrawingBuffer = (map?._canvasContextAttributes?.preserveDrawingBuffer);
+
+    const _coverEdits = options.coverEdits === false ? false : true;
+
+    if(_coverEdits){
+        if(!preserveDrawingBuffer){
+            map._canvasContextAttributes = map?._canvasContextAttributes || {}; 
+            map._canvasContextAttributes.preserveDrawingBuffer = true;
+            map.redraw();
+            console.warn("Setting the map's initial preserveDrawingBuffer setting to true may prevent screen flicker.");
+        }
+       
+        const coverData = await htmlToImage.toPng(mapElement);
+        photocover = document.createElement('img');
+        mapElement.parentNode.prepend(photocover);
+        photocover.style.height = `${mapElement.getBoundingClientRect().height}px`;
+        photocover.style.width = `${mapElement.getBoundingClientRect().width}px`;
+        photocover.style.position = 'absolute';
+        photocover.style.top = '0';
+        photocover.style.left = '0';
+        photocover.style.zIndex = 999;
+        photocover.setAttribute('id', 'photocover');
+        photocover.src = coverData;
+    }
 
     if (typeof mapZIndex === 'string') mapElement.style.zIndex = 0;
 
@@ -34,14 +64,16 @@ export async function toElement(map, options) {
     virtualClone.style.height = `${mapElement.getBoundingClientRect().height}px`;
     virtualClone.style.width = `${mapElement.getBoundingClientRect().width}px`;
     virtualClone.setAttribute('id', 'virtual-map-container');
-
     removeElements(virtualClone, 'canvas.maplibregl-canvas');
 
-    const originalCanvas = map.getCanvas();
 
+    if (options.bbox) {
+        map.fitBounds(options.bbox, { animate: false });
+    }
     map.redraw();
     return new Promise((resolve, reject) => {
         map.once('idle', () => {
+
             manageOverlayVisibility(map, options, virtualClone);
 
             const newCanvas = copyCanvas(originalCanvas);
@@ -49,7 +81,7 @@ export async function toElement(map, options) {
             virtualClone.getElementsByClassName('maplibregl-canvas-container')[0].append(newCanvas);
 
             mapElement.append(virtualClone);
-
+           
             let imgFunc;
             switch (options.format) {
                 case 'jpeg':
@@ -72,6 +104,10 @@ export async function toElement(map, options) {
                     targetImageElement.src = dataUrl;
                     mapElement.style.zIndex = mapZIndex;
                     virtualClone.remove();
+                    map._canvasContextAttributes.preserveDrawingBuffer = preserveDrawingBuffer;
+                    if(photocover){
+                        photocover.remove();
+                    }
                     resolve();
                 })
                 .catch((err) => {
@@ -80,6 +116,7 @@ export async function toElement(map, options) {
                 });
         });
     })
+
 }
 
 /**

@@ -14,7 +14,6 @@ A JavaScript library that generates an HTML image element with a PNG source from
 
 ## Future Development
 
-* Support for generating images in formats other than PNG
 * Direct access to image data for use cases like direct downloading
 * Support different image resolutions and aspect ratios that may not match the current map canvas
 

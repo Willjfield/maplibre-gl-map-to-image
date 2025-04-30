@@ -1,6 +1,6 @@
 {
   "name": "maplibre-gl-map-to-image",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A plug in for maplibregljs that captures a map canvas along with overlays and converts it to a raster image.",
   "main": "index.js",
   "type": "module",

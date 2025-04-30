@@ -14,8 +14,23 @@
       #map {
           position: absolute;
           top: 0;
-          bottom: 0;
-          width: 100%;
+          left: 0px;
+          width: 500px;
+          height: 500px;
+      }
+
+      #image {
+          position: absolute;
+          top: 0;
+          left: 510px;
+          width: 500px;
+          height: 500px;
+      }
+
+      #create-image {
+          position: absolute;
+          top: 520px;
+          left: 510px;
       }
   </style>
   </head>
@@ -23,6 +38,7 @@
     <div id="app">
       <div id="map"></div>
       <img id="image" />
+      <button id="create-image">Create Image</button>
     </div>
     <script type="module" src="/src/main.js"></script>
   </body>
