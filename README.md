@@ -26,7 +26,7 @@ A JavaScript library that generates an HTML image element with a PNG source from
 To use this library, simply call the `toPng` function and pass in your Maplibre GL JS map instance, along with options for which overlays to include. The function will return a PNG image that can be set as the source of an existing HTML `img` element.
 
 ```javascript
-import { toPng } from 'maplibre-image-generator';
+import { toElement } from 'maplibre-gl-map-to-image';
 
 const map = new maplibregl.Map({
   // your map options here
@@ -37,6 +37,7 @@ const targetImage = document.getElementById('target-image');
 const options = {
     targetImageId, //* @param {string} REQUIRED: The ID of the target image element where the PNG will be set.
     [bbox], //* @param {array} Optional bounding box to fit the map before conversion. Default: null
+    coverEdits, //* @param {boolean} Optional flag to hide changes made to the map while preparing the image. Eg. Setting it to a different bounding box. Default: true 
     hideAllControls, //* @param {boolean} Optional flag to hide all map controls during conversion. Default: false
     [hideControlsInCorner], //* @param {array} Optional specific corners to hide controls from. Default: []
     hideMarkers, //* @param {boolean} Optional flag to hide markers during conversion. Default: false
@@ -45,6 +46,18 @@ const options = {
     [showHiddenLayers], //* @param {array} Optional layer IDs to show during conversion. Default: []
 }
 
-await toPng(map, options);
+await toElement(map, options);
 
 ```
+
+## Demo
+
+Source for the demo is in the ./demo folder.
+To run the demo from the project root folder:
+
+```bash
+npm install
+npm run demo
+```
+
+Check localhost:5173
