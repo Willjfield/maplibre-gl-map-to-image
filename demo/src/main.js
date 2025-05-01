@@ -15,7 +15,7 @@ const map = new maplibregl.Map({
 const options = {
     targetImageId: 'image',
     bbox: [-80, 20, -60, 60],
-    coverEdits: false
+    coverEdits: true
 };
 
 function createImage(){

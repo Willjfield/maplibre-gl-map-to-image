@@ -5,8 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "jest --experimental-vm-modules",
-    "coverage": "jest --all --coverage"
+    "demo": "vite serve ./demo"
   },
   "repository": {
     "type": "git",
@@ -20,6 +19,7 @@
   "homepage": "https://github.com/Willjfield/maplibre-gl-map-to-image#readme",
   "devDependencies": {
     "html-to-image": "^1.11.13",
+    "maplibre-gl": "^5.4.0",
     "vite": "^6.3.1"
   }
 }
