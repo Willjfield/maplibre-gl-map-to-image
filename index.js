@@ -16,37 +16,44 @@ import * as htmlToImage from 'html-to-image';
  * @param {array} [options.bbox] - Optional bounding box to fit the map to, with padding.
  * @param {boolean} [options.coverEdits] - Flag to prevent seeing any map edits by capturing a background image before the map is rendered.
  * @param {string} [options.format] - The format of the generated image. Possible values are 'jpeg', 'png', 'svg', and 'canvas'.
- * @param {object} [options.htmlToImageOptions] - additonal options for htmlToImage
+ * @param {object} [options.htmlToImageOptions] - additional options for htmlToImage
  * @returns {Promise} A promise that resolves when the image has been generated and inserted into the page.
  */
 export async function toElement(map, options) {
-   
+
+    const htmlToImageOptions = options.htmlToImageOptions || {}
+    const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1
+    if (isFirefox) {
+        htmlToImageOptions.skipFonts = true
+    }
+
+
+
     const mapElement = map.getContainer();
     let originalBounds = map.getBounds();
-    
+
     const originalCanvas = map.getCanvas();
-   
+
     const targetImageElement = document.getElementById(options.targetImageId);
     const virtualClone = mapElement.cloneNode(true);
     const mapZIndex = getComputedStyle(mapElement).zIndex;
 
     mapElement.style.height = `${mapElement.getBoundingClientRect().height}px`;
     mapElement.style.width = `${mapElement.getBoundingClientRect().width}px`;
-    
+
     let photocover;
     const preserveDrawingBuffer = (map?._canvasContextAttributes?.preserveDrawingBuffer);
 
     const _coverEdits = options.coverEdits === false ? false : true;
 
-    if(_coverEdits){
-        if(!preserveDrawingBuffer){
-            map._canvasContextAttributes = map?._canvasContextAttributes || {}; 
+    if (_coverEdits) {
+        if (!preserveDrawingBuffer) {
+            map._canvasContextAttributes = map?._canvasContextAttributes || {};
             map._canvasContextAttributes.preserveDrawingBuffer = true;
             map.redraw();
             console.warn("Setting the map's initial preserveDrawingBuffer setting to true may prevent screen flicker.");
         }
-       
-        const coverData = await htmlToImage.toPng(mapElement);
+        const coverData = await htmlToImage.toPng(mapElement, htmlToImageOptions);
         photocover = document.createElement('img');
         mapElement.parentNode.prepend(photocover);
         photocover.style.height = `${mapElement.getBoundingClientRect().height}px`;
@@ -73,13 +80,6 @@ export async function toElement(map, options) {
     }
     map.redraw();
 
-    // temp fix to https://github.com/bubkoo/html-to-image/issues/535
-    const htmlToImageOptions = options.htmlToImageOptions || {}
-    const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1
-    if (isFirefox) {
-        htmlToImageOptions.skipFonts = true
-    }
-
     return new Promise((resolve, reject) => {
         map.once('idle', () => {
 
@@ -90,7 +90,7 @@ export async function toElement(map, options) {
             virtualClone.getElementsByClassName('maplibregl-canvas-container')[0].append(newCanvas);
 
             mapElement.append(virtualClone);
-           
+
             let imgFunc;
             switch (options.format) {
                 case 'jpeg':
@@ -107,14 +107,14 @@ export async function toElement(map, options) {
                     imgFunc = htmlToImage.toPng;
                     break;
             }
-            
+
             imgFunc(virtualClone, htmlToImageOptions)
                 .then((dataUrl) => {
                     targetImageElement.src = dataUrl;
                     mapElement.style.zIndex = mapZIndex;
                     virtualClone.remove();
                     map._canvasContextAttributes.preserveDrawingBuffer = preserveDrawingBuffer;
-                    if(photocover){
+                    if (photocover) {
                         photocover.remove();
                     }
                     resolve();
