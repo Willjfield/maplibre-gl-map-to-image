@@ -16,6 +16,7 @@ import * as htmlToImage from 'html-to-image';
  * @param {array} [options.bbox] - Optional bounding box to fit the map to, with padding.
  * @param {boolean} [options.coverEdits] - Flag to prevent seeing any map edits by capturing a background image before the map is rendered.
  * @param {string} [options.format] - The format of the generated image. Possible values are 'jpeg', 'png', 'svg', and 'canvas'.
+ * @param {object} [options.htmlToImageOptions] - additonal options for htmlToImage
  * @returns {Promise} A promise that resolves when the image has been generated and inserted into the page.
  */
 export async function toElement(map, options) {
@@ -71,6 +72,14 @@ export async function toElement(map, options) {
         map.fitBounds(options.bbox, { animate: false });
     }
     map.redraw();
+
+    // temp fix to https://github.com/bubkoo/html-to-image/issues/535
+    const htmlToImageOptions = options.htmlToImageOptions || {}
+    const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1
+    if (isFirefox) {
+        htmlToImageOptions.skipFonts = true
+    }
+
     return new Promise((resolve, reject) => {
         map.once('idle', () => {
 
@@ -99,7 +108,7 @@ export async function toElement(map, options) {
                     break;
             }
             
-            imgFunc(virtualClone)
+            imgFunc(virtualClone, htmlToImageOptions)
                 .then((dataUrl) => {
                     targetImageElement.src = dataUrl;
                     mapElement.style.zIndex = mapZIndex;
