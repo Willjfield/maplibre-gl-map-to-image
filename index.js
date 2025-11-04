@@ -107,8 +107,10 @@ export async function toElement(map, options) {
                     imgFunc = htmlToImage.toPng;
                     break;
             }
+            
+            const pixelRatio = options.pixelRatio || 1;
 
-            imgFunc(virtualClone, htmlToImageOptions)
+            imgFunc(virtualClone, { pixelRatio })
                 .then((dataUrl) => {
                     targetImageElement.src = dataUrl;
                     mapElement.style.zIndex = mapZIndex;
@@ -207,14 +209,15 @@ function removeElements(element, selector) {
 function copyCanvas(canvas) {
 
     const newCanvas = document.createElement('canvas');
-    const rect = canvas.getBoundingClientRect();
-
-    newCanvas.width = rect.width;
-    newCanvas.height = rect.height;
-    newCanvas.style.width = rect.width;
-    newCanvas.style.height = rect.height;
-
     const context = newCanvas.getContext('2d');
-    context.drawImage(canvas, 0, 0, rect.width, rect.height);
+
+    newCanvas.width = canvas.width;
+    newCanvas.height = canvas.height;
+
+    context.drawImage(canvas, 0, 0, canvas.width, canvas.height);
+
+    newCanvas.style.width = `${canvas.style.width}`;
+    newCanvas.style.height = `${canvas.style.height}`;
+
     return newCanvas;
 }
