@@ -5,7 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "demo": "vite serve ./demo"
+    "demo": "vite serve ./demo",
+    "build": "rollup -c",
+    "build:watch": "rollup -c -w"
   },
   "repository": {
     "type": "git",
@@ -18,8 +20,12 @@
   },
   "homepage": "https://github.com/Willjfield/maplibre-gl-map-to-image#readme",
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^29.0.0",
+    "@rollup/plugin-node-resolve": "^16.0.3",
+    "@rollup/plugin-terser": "^0.4.4",
     "html-to-image": "^1.11.13",
     "maplibre-gl": "^5.4.0",
+    "rollup": "^4.52.5",
     "vite": "^6.3.1"
   }
 }
