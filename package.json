@@ -3,11 +3,17 @@
   "version": "1.1.0",
   "description": "A plug in for maplibregljs that captures a map canvas along with overlays and converts it to a raster image.",
   "main": "index.js",
+  "browser": "dist/maplibre-gl-map-to-image.min.js",
   "type": "module",
+  "files": [
+    "index.js",
+    "dist"
+  ],
   "scripts": {
     "demo": "vite serve ./demo",
     "build": "rollup -c",
-    "build:watch": "rollup -c -w"
+    "build:watch": "rollup -c -w",
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
