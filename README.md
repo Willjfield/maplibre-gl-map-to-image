@@ -1,7 +1,13 @@
 # maplibre-gl-map-to-image
 
+### NPM:
 ```
 npm install maplibre-gl-map-to-image --save
+```
+
+### CDN:
+```
+https://unpkg.com/maplibre-gl-map-to-image@1.2.0/dist/maplibre-gl-map-to-image.min.js
 ```
 
 A JavaScript library that generates an HTML image element with a PNG source from a Maplibre GL JS map. The library allows users to customize the map image by selecting which overlays to include or exclude, such as markers, popups, and controls. It also allows the map to fit a bounding box only for the purpose of image generation.
