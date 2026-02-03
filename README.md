@@ -8,6 +8,7 @@ npm install maplibre-gl-map-to-image --save
 ### CDN:
 ```
 https://unpkg.com/maplibre-gl-map-to-image@1.2.0/dist/maplibre-gl-map-to-image.min.js
+https://unpkg.com/maplibre-gl-map-to-image@1.2.0/dist/maplibre-gl-map-to-image.esm.js
 ```
 
 A JavaScript library that generates an HTML image element with a PNG source from a Maplibre GL JS map. The library allows users to customize the map image by selecting which overlays to include or exclude, such as markers, popups, and controls. It also allows the map to fit a bounding box only for the purpose of image generation.
@@ -58,6 +59,22 @@ const options = {
 
 await toElement(map, options);
 
+```
+
+### Avoid importing from `dist/*.min.js` in bundlers
+
+Some bundlers will warn (correctly) if you try to do a named ESM import from the UMD browser bundle:
+
+```js
+// ❌ Don't do this (UMD bundle has no ESM exports)
+import { toElement } from "maplibre-gl-map-to-image/dist/maplibre-gl-map-to-image.min.js";
+```
+
+Always import from the package root (or use the ESM dist build for `type="module"` CDNs):
+
+```js
+// ✅ Do this
+import { toElement } from "maplibre-gl-map-to-image";
 ```
 
 ## Demo
